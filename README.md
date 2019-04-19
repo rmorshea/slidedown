@@ -44,4 +44,8 @@ pip install slidedown
 slidedown README.md
 ```
 
-*try it out with this README file!*
+3. Open up your browser
+
+```
+http://localhost:5678/idom/client/index.html
+```
