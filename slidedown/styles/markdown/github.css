@@ -31,7 +31,7 @@ html, body {
 #slide {
   font-family: Helvetica, arial, sans-serif;
   font-size: 175%;
-  line-height: 1.6;
+  line-height: normal;
   margin-left: 28%;
   max-width: 900px;
   padding-top: 10px;
@@ -397,7 +397,7 @@ pre code {
   background-color: #f8f8f8;
   border: 1px solid #cccccc;
   font-size: 1em;
-  line-height: 19px;
+  line-height: normal;
   overflow: auto;
   padding: 6px 10px;
   border-radius: 3px;
@@ -407,7 +407,7 @@ pre {
   background-color: #f8f8f8;
   border: 1px solid #cccccc;
   font-size: 1em;
-  line-height: 19px;
+  line-height: normal;
   overflow: auto;
   padding: 6px 10px;
   border-radius: 3px;
