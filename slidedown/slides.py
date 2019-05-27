@@ -22,7 +22,7 @@ async def Slidedeck(self, filepath, markdown_style, code_style):
     async def shift_slide(key):
         if key == "ArrowLeft":
             index.set((index.get() - 1) % len(slides))
-        else:
+        elif key in (" ", "ArrowRight"):
             index.set((index.get() + 1) % len(slides))
         slide_view.update()
 

@@ -32,14 +32,19 @@ html, body {
   font-family: Helvetica, arial, sans-serif;
   font-size: 175%;
   line-height: normal;
-  margin-left: 28%;
-  max-width: 900px;
-  padding-top: 10px;
-  padding-bottom: 10px;
+  width: 50%;
+  position: relative;
+  top: 50%;
+  transform: translateY(-50%);
+  margin: auto auto;
   background-color: white;
-  padding: 30px;
   color: #333;
-  height: 100%;
+  text-align: center;
+}
+
+#slide-content {
+  display: inline-block;
+  text-align: left;
 }
 
 #slide > *:first-child {
