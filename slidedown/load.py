@@ -25,36 +25,26 @@ def markdown_to_slidedeck(md: str) -> List[Dict[str, Any]]:
     slides = []
     for j in range(len(slide_boundaries) - 1):
         start, stop = slide_boundaries[j : j + 2]
-        slides.append(idom.html.div(*nodes[start:stop]))
+        slides.append(
+            idom.html.div(*nodes[start:stop], id="slide-content")
+        )
 
     return slides
 
 
 def _highlight_code(node):
     if node["tagName"] == "pre":
-        if node.get("attributes", {}).get("data-skip", False):
-            new_children = []
-            new_node = {
-                "tagName": "div",
-                "children": new_children,
-                "attributes": {"data-skip": True},
-            }
-            for child in node["children"]:
-                if isinstance(child, dict):
-                    if child["tagName"] == "code" and "class" in child["attributes"]:
-                        lang = child["attributes"]["class"].split("-", 1)[1]
-                        try:
-                            lexer = get_lexer_by_name(lang, stripall=True)
-                        except ClassNotFound:
-                            lexer = None
-                        if lexer:
-                            formatter = HtmlFormatter()
-                            text = "\n".join(child["children"])
-                            model = html_to_vdom(highlight(text, lexer, formatter))
-                            new_children.extend(model["children"])
-                            continue
-                new_children.append(child)
-            return new_node
+        new_children = []
+        new_node = {
+            "tagName": "div",
+            "children": new_children
+        }
+        for child in node["children"]:
+            if isinstance(child, dict):
+                if child["tagName"] == "code" and "class" in child["attributes"]:
+                    child = HiglightedCode(child)
+            new_children.append(child)
+        return new_node
     return node
 
 
@@ -63,6 +53,20 @@ def _idom_alternative(node):
         with open(node["attributes"]["alt"].split(":", 1)[1], "r") as f:
             script = f.read()
         return ExecPythonScript(script)
+    return node
+
+
+@idom.element
+async def HiglightedCode(self, node):
+    lang = node["attributes"]["class"].split("-", 1)[1]
+    try:
+        lexer = get_lexer_by_name(lang, stripall=True)
+    except ClassNotFound:
+        lexer = None
+    if lexer:
+        formatter = HtmlFormatter()
+        text = "\n".join(node["children"])
+        return html_to_vdom(highlight(text, lexer, formatter))
     return node
 
 
