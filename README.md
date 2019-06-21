@@ -47,5 +47,5 @@ slidedown README.md
 3. Open up your browser
 
 ```
-http://localhost:5678/idom/client/index.html
+http://localhost:5678/client/index.html
 ```
