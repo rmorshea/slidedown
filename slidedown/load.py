@@ -22,11 +22,13 @@ def markdown_to_slidedeck(md: str) -> List[Dict[str, Any]]:
                 slide_boundaries.append(i)
     slide_boundaries.append(len(nodes))
 
+    header = idom.html.div(*nodes[0:slide_boundaries[0]], id="slide-header")
+
     slides = []
     for j in range(len(slide_boundaries) - 1):
         start, stop = slide_boundaries[j : j + 2]
         slides.append(
-            idom.html.div(*nodes[start:stop], id="slide-content")
+            idom.html.div(header, *nodes[start:stop], id="slide-content")
         )
 
     return slides
@@ -41,7 +43,8 @@ def _highlight_code(node):
         }
         for child in node["children"]:
             if isinstance(child, dict):
-                if child["tagName"] == "code" and "class" in child["attributes"]:
+                if child["tagName"] == "code":
+                    child["attributes"].setdefault("class", "language-text")
                     child = HiglightedCode(child)
             new_children.append(child)
         return new_node
