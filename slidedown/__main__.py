@@ -3,17 +3,17 @@
 Make slideshows with markdown.
 
 Usage:
-  slidoml <filepath> [ --ip=<ip> ] [ --port=<port> ] [ --markdown-style=<style> ] [ --code-style=<style> ]
+  slidedown <filepath> [ --host=<host> ] [ --port=<port> ] [ --markdown-style=<style> ] [ --code-style=<style> ]
 """
 
-from idom.server.sanic import PerClientState
+import idom
 from docopt import docopt
 from typing import Dict, Any, Callable
 
 from .slides import Slidedeck
 
 DEFAULTS: Dict[str, Any] = {
-    "--ip": "127.0.0.1",
+    "--host": "127.0.0.1",
     "--port": 5678,
     "--markdown-style": "github",
     "--code-style": "default",
@@ -23,7 +23,7 @@ REMAP: Dict[str, str] = {
     "<filepath>": "filepath",
     "--markdown-style": "markdown_style",
     "--code-style": "code_style",
-    "--ip": "ip",
+    "--host": "host",
     "--port": "port",
 }
 
@@ -43,10 +43,12 @@ def run() -> None:
     for old_k, new_k in REMAP.items():
         arguments[new_k] = arguments.pop(old_k)
 
-    server = PerClientState(
-        Slidedeck,
-        arguments["filepath"],
-        arguments["markdown_style"],
-        arguments["code_style"],
+    idom.run(
+        lambda: Slidedeck(
+            arguments["filepath"],
+            arguments["markdown_style"],
+            arguments["code_style"],
+        ),
+        host=arguments["host"],
+        port=int(arguments["port"]),
     )
-    server.run(arguments["ip"], arguments["port"])
