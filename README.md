@@ -68,7 +68,7 @@ For example, the following markup:
 <span data-idom="hello.py">
 ```
 
-and a script `hello.py` dwith the following content:
+and a script `hello.py` containing:
 
 ```python
 import idom
