@@ -1,72 +1,65 @@
 import idom
-import os
-from typing import Dict, List, Any
 
-from .load import markdown_to_slidedeck
-
-HERE = os.path.dirname(__file__)
+from .load import use_slides_and_styles
 
 
-@idom.element(state="filepath, markdown_style, code_style")
-async def Slidedeck(self, filepath, markdown_style, code_style, focus=True, index=0):
-    slides, markdown_style, code_style = _load_slides_and_styles(
+def use_const(func, *args, **kwargs):
+    return idom.hooks.use_state(lambda: func(*args, **kwargs))[0]
+
+
+@idom.element
+def Slidedeck(filepath, markdown_style, code_style):
+    slides, markdown_style, code_style = use_slides_and_styles(
         filepath, markdown_style, code_style
     )
 
-    index_var = idom.Var(index)
-    slide_view = SlideView(slides, index_var)
+    is_focused = use_const(idom.Ref, False)
+    set_focused = use_const(idom.Ref, lambda is_focused: None)
 
-    events = idom.Events()
+    focus_indicator = FocusIndicator(is_focused, set_focused)
 
-    @events.on("KeyDown")
-    async def shift_slide(event):
+    index, set_index = idom.hooks.use_state(0)
+    slide_view = idom.html.div({"id": "slide"}, slides[index])
+
+    def set_initial_focus(event):
+        set_focused.current(True)
+
+    def shift_slide(event):
         if event["key"] == "Escape":
-            self.update(index=index_var.get(), focus=(not focus))
-        elif focus:
+            # toggle focus state
+            set_focused.current(not is_focused.current)
+        if is_focused.current:
             if event["key"] == "ArrowLeft":
-                index_var.set((index_var.get() - 1) % len(slides))
-                slide_view.update()
+                set_index((index - 1) % len(slides))
             elif event["key"] in (" ", "ArrowRight"):
-                index_var.set((index_var.get() + 1) % len(slides))
-                slide_view.update()
+                set_index((index + 1) % len(slides))
 
     style = {"outline": "none", "height": "100%", "width": "100%"}
-    if not focus:
-        style["border"] = "3px solid grey"
 
     return idom.html.div(
+        {
+            "onKeyDown": shift_slide,
+            "onClick": set_initial_focus,
+            "tabIndex": -1,
+            "style": style,
+        },
         idom.html.style(code_style),
         idom.html.style(markdown_style),
         slide_view,
-        eventHandlers=events,
-        tabIndex=-1,
-        style=style,
+        focus_indicator,
     )
 
 
-@idom.element(state="slides, index")
-async def SlideView(
-    self: idom.Element, slides: List[Dict[str, Any]], index: idom.Var[int]
-) -> Dict[str, Any]:
-    return idom.html.div(slides[index.get()], id="slide")
+@idom.element
+def FocusIndicator(is_focused, set_focused):
+    is_focused.current, set_focused.current = idom.hooks.use_state(is_focused.current)
 
-
-def _load_slides_and_styles(filepath, markdown_style_path, code_style_path):
-    with open(filepath, "r") as f:
-        slides = markdown_to_slidedeck(f.read())
-
-    if not markdown_style_path.endswith(".css"):
-        markdown_style_path = os.path.join(
-            HERE, "styles", "markdown", markdown_style_path + ".css"
+    if not is_focused.current:
+        return idom.html.div(
+            {
+                "style": {"position": "absolute", "bottom": "4px", "right": "16px"},
+            },
+            idom.html.pre({"fontSize": "16px"}, "escaped"),
         )
-    with open(markdown_style_path, "r") as f:
-        markdown_style = f.read()
-
-    if not code_style_path.endswith(".css"):
-        code_style_path = os.path.join(
-            HERE, "styles", "pygments", code_style_path + ".css"
-        )
-    with open(code_style_path, "r") as f:
-        code_style = f.read()
-
-    return slides, markdown_style, code_style
+    else:
+        return idom.html.div()

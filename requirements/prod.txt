@@ -1,4 +1,4 @@
 docopt ==0.6.2
-idom ==0.5.0
-pygments ==2.3
+idom[stable] ==0.14.0
+pygments ==2.7.1
 cmarkgfm ==0.4.2

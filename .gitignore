@@ -6,6 +6,12 @@ dist
 __pycache__/
 *.py[cod]
 
+# --- VSCode ---
+.vscode
+
+# --- PyEnv ---
+.python-version
+
 # --- Python Tools ---
 *.pytest_cache
 *.mypy_cache
