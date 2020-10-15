@@ -81,8 +81,8 @@ def _highlight_code(node):
 
 
 def _idom_alternative(node):
-    if node.get("attributes", {}).get("alt", "").startswith("python:"):
-        with open(node["attributes"]["alt"].split(":", 1)[1], "r") as f:
+    if "data-idom" in node.get("attributes", {}):
+        with open(node["attributes"]["data-idom"], "r") as f:
             script = f.read()
         return ExecPythonScript(script)
     return node
@@ -107,18 +107,12 @@ def HiglightedCode(node):
 
 @idom.element
 def ExecPythonScript(script: str):
-    env = {"idom": idom}
+    env = {}
     exec(script, env)
-    main = env.get("main")
-    if not callable(main):
-        raise ValueError("Python script must have a function called 'main'")
-    result = main()
-    if isinstance(result, str):
-        return {"tagName": "div", "children": [result]}
-    elif result is not None:
-        return result
-    else:
-        return {"tagName": "div"}
+    Main = env.get("Main")
+    if not callable(Main):
+        raise ValueError("Python script must have a 'Main' element")
+    return Main()
 
 
 def _remove_extra_span_from_highlighted_code(vdom):

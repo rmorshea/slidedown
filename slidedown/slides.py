@@ -8,7 +8,7 @@ def use_const(func, *args, **kwargs):
 
 
 @idom.element
-def Slidedeck(filepath, markdown_style, code_style):
+def Slidedeck(initial_slide_number, filepath, markdown_style, code_style):
     slides, markdown_style, code_style = use_slides_and_styles(
         filepath, markdown_style, code_style
     )
@@ -18,7 +18,7 @@ def Slidedeck(filepath, markdown_style, code_style):
 
     focus_indicator = FocusIndicator(is_focused, set_focused)
 
-    index, set_index = idom.hooks.use_state(0)
+    index, set_index = idom.hooks.use_state(initial_slide_number - 1)
     slide_view = idom.html.div({"id": "slide"}, slides[index])
 
     def set_initial_focus(event):

@@ -49,3 +49,44 @@ slidedown README.md
 ```
 http://localhost:5678/client/index.html
 ```
+
+
+# Interactive Elements
+
+You can embed interactive views into your slides using
+[IDOM](https://github.com/idom-team/idom),
+by adding an HTML element into your markup with an attribute of the form
+`data-idom="your_script.py"` where `your_script.py` should be placed in the same
+directory that `slidedown` was invoked and must contains a function `Main()` that
+returns an IDOM element or a VDOM dict.
+
+For example, the following markup:
+
+```
+# Say Hello IDOM
+
+<span data-idom="hello.py">
+```
+
+and a script `hello.py` dwith the following content:
+
+```python
+import idom
+
+
+@idom.element
+def Main():
+    hi_count, set_hi_count = idom.hooks.use_state(1)
+    plural = 's' if hi_count > 1 else ''
+    return idom.html.button(
+        {"onClick": lambda event: set_hi_count(hi_count + 1)},
+        f"IDOM said hi {hi_count} time{plural}",
+    )
+```
+
+Should produce the following output:
+
+> # Say Hello IDOM
+> <button>IDOM said hi 1 time</button>
+
+Clicking the button should increment the count (it won't here of course).
