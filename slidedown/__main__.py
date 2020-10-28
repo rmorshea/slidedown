@@ -21,7 +21,7 @@ DEFAULTS: Dict[str, Any] = {
     "--port": 5678,
     "--markdown-style": "github",
     "--code-style": "default",
-    "<start-at-slide-number>": 1
+    "<start-at-slide-number>": 1,
 }
 
 REMAP: Dict[str, str] = {
