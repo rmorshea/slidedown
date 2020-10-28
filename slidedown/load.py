@@ -59,9 +59,7 @@ def markdown_to_slidedeck(md: str) -> List[Dict[str, Any]]:
     slides = []
     for j in range(len(slide_boundaries) - 1):
         start, stop = slide_boundaries[j : j + 2]
-        slides.append(
-            idom.html.div({"id": "slide-content"}, header, *nodes[start:stop])
-        )
+        slides.append((header, *nodes[start:stop]))
 
     return slides
 

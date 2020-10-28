@@ -45,7 +45,7 @@ def Slidedeck(initial_slide_number, filepath, markdown_style, code_style):
         },
         idom.html.style(code_style),
         idom.html.style(markdown_style),
-        slide_view,
+        _center_content(slide_view),
         focus_indicator,
     )
 
@@ -63,3 +63,23 @@ def FocusIndicator(is_focused, set_focused):
         )
     else:
         return idom.html.div()
+
+
+def _center_content(content):
+    return idom.html.div(
+        {"style": {"display": "table", "height": "100%", "width": "100%"}},
+        idom.html.div(
+            {"style": {"display": "table-cell", "verticalAlign": "middle"}},
+            idom.html.div(
+                {
+                    "style": {
+                        "width": "fit-content",
+                        "maxWidth": "50%",
+                        "marginLeft": "auto",
+                        "marginRight": "auto",
+                    }
+                },
+                content,
+            ),
+        ),
+    )

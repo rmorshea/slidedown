@@ -25,20 +25,12 @@ html, body, #app {
 
 #slide {
   font-family: Helvetica, arial, sans-serif;
-  font-size: 3vmin;
-  line-height: normal;
-  width: 50%;
-  position: relative;
-  top: 50%;
-  transform: translateY(-52%);
-  margin: auto auto;
+  font-size: 2.7vmin;
+  line-height: 1.5;
+  height: 100%;
+  width: 100%;
   background-color: white;
   color: #333;
-  text-align: center;
-}
-
-#slide-content {
-  display: inline-block;
   text-align: left;
 }
 
@@ -382,27 +374,25 @@ pre code {
   background: transparent;
 }
 
-.highlight pre {
-  background-color: #f8f8f8;
-  border: 1px solid #cccccc;
-  font-size: 1em;
-  line-height: normal;
-  overflow: auto;
-  padding: 6px 10px;
-  border-radius: 3px;
-}
-
 pre {
   background-color: #f8f8f8;
   border: 1px solid #cccccc;
-  font-size: 1em;
   line-height: normal;
   overflow: auto;
-  padding: 6px 10px;
-  border-radius: 3px;
+  padding: 15px;
+  border-radius: 6px;
 }
 
 pre code, pre tt {
   background-color: transparent;
   border: none;
+}
+
+pre, code, kbd, samp, tt {
+  font-size:0.8em;
+}
+
+code {
+  padding: .1em .2em;
+  border-radius: 6px;
 }
