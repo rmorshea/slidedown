@@ -44,7 +44,7 @@ def markdown_to_slidedeck(md: str) -> List[Dict[str, Any]]:
     nodes = html_to_vdom(
         cmarkgfm.github_flavored_markdown_to_html(md),
         _highlight_code,
-        _idom_alternative,
+        _embedded_idom_script,
     )["children"]
 
     slide_boundaries = []
@@ -78,7 +78,7 @@ def _highlight_code(node):
     return node
 
 
-def _idom_alternative(node):
+def _embedded_idom_script(node):
     if "data-idom" in node.get("attributes", {}):
         with open(node["attributes"]["data-idom"], "r") as f:
             script = f.read()
