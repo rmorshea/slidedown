@@ -9,7 +9,7 @@
 
 Turn markdown like this:
 
-```
+```markdown
 # Step 1
 
 Create an awesome slide deck.
@@ -64,8 +64,8 @@ returns an IDOM element or a VDOM dict.
 
 The following markup:
 
-```
-# Say Hello IDOM
+```markdown
+# Hello IDOM!
 
 <span data-idom="hello.py" />
 ```
@@ -89,7 +89,5 @@ Should produce the following output:
 
 <img
   style="width: 500px"
-  src="https://github.com/rmorshea/slidedown/raw/master/docs/say-hello-idom.png"
+  src="https://github.com/rmorshea/slidedown/raw/master/docs/slidedown-hello-idom.png"
 />
-
-Clicking the button should increment the count (it won't here of course).
