@@ -1,6 +1,6 @@
 import idom
 
-from .load import use_slides_and_styles
+from .load import use_slides
 
 
 def use_const(func, *args, **kwargs):
@@ -8,10 +8,8 @@ def use_const(func, *args, **kwargs):
 
 
 @idom.element
-def Slidedeck(initial_slide_number, filepath, markdown_style, code_style):
-    slides, markdown_style, code_style = use_slides_and_styles(
-        filepath, markdown_style, code_style
-    )
+def Slidedeck(initial_slide_number, filepath):
+    slides = use_slides(filepath)
 
     is_focused = use_const(idom.Ref, False)
     set_focused = use_const(idom.Ref, lambda is_focused: None)
@@ -43,8 +41,7 @@ def Slidedeck(initial_slide_number, filepath, markdown_style, code_style):
             "tabIndex": -1,
             "style": style,
         },
-        idom.html.style(code_style),
-        idom.html.style(markdown_style),
+        idom.html.link({"href": "/_static/markdown.css", "rel": "stylesheet"}),
         _center_content(slide_view),
         focus_indicator,
     )

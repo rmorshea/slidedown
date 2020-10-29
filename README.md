@@ -88,7 +88,7 @@ def Main():
 Should produce the following output:
 
 <img
-  style="outline: 1px solid black"
+  style="width: 500px"
   src="https://github.com/rmorshea/slidedown/raw/master/docs/say-hello-idom.png"
 />
 
