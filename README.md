@@ -89,5 +89,5 @@ Should produce the following output:
 
 <img
   style="width: 500px"
-  src="https://github.com/rmorshea/slidedown/raw/master/docs/slidedown-hello-idom.png"
+  src="https://github.com/rmorshea/slidedown/raw/master/docs/slidedown-hello-idom.gif"
 />
