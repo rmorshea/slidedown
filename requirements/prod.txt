@@ -1,4 +1,4 @@
 docopt ==0.6.2
-idom[stable] >=0.14.2
+idom[stable] >=0.22.1
 pygments ==2.7.1
 markdown ==3.3.3

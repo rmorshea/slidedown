@@ -4,7 +4,6 @@
 - Do you 😠 PowerPoint?
 - Do you ❤️ Markdown?
 
-
 # You're in Luck!
 
 Turn markdown like this:
@@ -50,7 +49,6 @@ slidedown README.md
 http://localhost:5678/client/index.html
 ```
 
-
 # Interactive Elements
 
 You can embed interactive views into your slides using [IDOM](https://github.com/idom-team/idom),
@@ -58,7 +56,6 @@ by adding an HTML element into your markup with an attribute of the form
 `data-idom="your_script.py"` where `your_script.py` should be placed in the same
 directory that `slidedown` was invoked and must contains a function `Main()` that
 returns an IDOM element or a VDOM dict.
-
 
 # IDOM in Slidedown Example
 
@@ -76,7 +73,7 @@ and a script `hello.py` containing:
 import idom
 
 
-@idom.element
+@idom.component
 def Main():
     hi_count, set_hi_count = idom.hooks.use_state(1)
     return idom.html.button(

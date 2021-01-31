@@ -1,7 +1,7 @@
 import idom
 
 
-@idom.element
+@idom.component
 def Main():
     hi_count, set_hi_count = idom.hooks.use_state(1)
     return idom.html.button(

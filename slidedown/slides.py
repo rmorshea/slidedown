@@ -7,7 +7,7 @@ def use_const(func, *args, **kwargs):
     return idom.hooks.use_state(lambda: func(*args, **kwargs))[0]
 
 
-@idom.element
+@idom.component
 def Slidedeck(initial_slide_number, filepath):
     slides = use_slides(filepath)
 
@@ -47,7 +47,7 @@ def Slidedeck(initial_slide_number, filepath):
     )
 
 
-@idom.element
+@idom.component
 def FocusIndicator(is_focused, set_focused):
     is_focused.current, set_focused.current = idom.hooks.use_state(is_focused.current)
 
