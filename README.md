@@ -72,7 +72,6 @@ and a script `hello.py` containing:
 ```python
 import idom
 
-
 @idom.component
 def Main():
     hi_count, set_hi_count = idom.hooks.use_state(1)

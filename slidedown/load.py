@@ -5,9 +5,6 @@ from typing import Any, Dict, List
 import markdown
 import idom
 from idom.utils import html_to_vdom
-from pygments import highlight
-from pygments.formatters import HtmlFormatter, ClassNotFound
-from pygments.lexers import get_lexer_by_name
 
 
 HERE = Path(__file__).parent

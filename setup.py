@@ -61,13 +61,22 @@ package["install_requires"] = requirements
 
 with open(os.path.join(root, "__init__.py")) as f:
     for line in f.read().split("\n"):
-        if line.startswith("__version__ = "):
-            version = eval(line.split("=", 1)[1])
+        if line.startswith('__version__ = "') and line.endswith('"  # DO NOT MODIFY'):
+            package["version"] = (
+                line
+                # get assignment value
+                .split("=", 1)[1]
+                # remove "DO NOT MODIFY" comment
+                .split("#", 1)[0]
+                # clean up leading/trailing space
+                .strip()
+                # remove the quotes
+                [1:-1]
+            )
             break
     else:
         print("No version found in __init__.py")
         sys.exit(1)
-package["version"] = version
 
 
 # -----------------------------------------------------------------------------

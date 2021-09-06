@@ -57,14 +57,14 @@ def run() -> None:
     idom_server = PerClientStateServer(
         lambda: Slidedeck(
             int(arguments["start_at_slide_number"]), arguments["filepath"]
-        )
+        ),
+        app=app,
     )
-    idom_server.register(app)
 
     run_options = {"host": arguments["host"], "port": arguments["port"]}
 
     if not arguments["no_auto_open"]:
-        thread = idom_server.daemon(**run_options)
+        thread = idom_server.run_in_thread(**run_options)
         webbrowser.open(f"http://{run_options['host']}:{run_options['port']}")
         thread.join()
     else:
