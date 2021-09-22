@@ -79,19 +79,32 @@ def markdown_to_slidedeck(project_path: Path, md: str) -> List[Dict[str, Any]]:
 
 
 def _embedded_idom_script(project_path, node):
-    if "data-idom" in node.get("attributes", {}):
+    node_attrs = node.get("attributes", {})
+    if "data-idom" in node_attrs:
         script_path = Path(node["attributes"]["data-idom"].replace("/", os.path.sep))
         if not os.path.isabs(script_path):
             script_path = project_path / script_path
-        return ExecPythonScript(script_path.read_text(encoding="utf-8"))
+
+        env = {}
+        exec(script_path.read_text(encoding="utf-8"), env)
+        Main = env.get("Main")
+        if not callable(Main):
+            raise ValueError(
+                f"Script {script_path} does not contain a compoonent named 'Main'"
+            )
+
+        params = {
+            k.split("-", 1)[1].replace("-", "_"): v
+            for k, v in node_attrs.items()
+            if k.startswith("data-") and k != "data-idom"
+        }
+
+        main = Main(**params)
+
+        non_data_attrs = {
+            k: v for k, v in node_attrs.items() if not k.startswith("data-")
+        }
+
+        return idom.html.div(non_data_attrs, main)
+
     return node
-
-
-@idom.component
-def ExecPythonScript(script: str):
-    env = {}
-    exec(script, env)
-    Main = env.get("Main")
-    if not callable(Main):
-        raise ValueError("Python script must have a 'Main' element")
-    return Main()

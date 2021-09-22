@@ -55,7 +55,8 @@ You can embed interactive views into your slides using [IDOM](https://github.com
 by adding an HTML element into your markup with an attribute of the form
 `data-idom="your_script.py"` where `your_script.py` should be placed in the same
 directory that `slidedown` was invoked and must contains a function `Main()` that
-returns an IDOM element or a VDOM dict.
+returns an IDOM element or a VDOM dict. All other `data-` attributes will be interpreted
+as parameters to pass to `Main()`.
 
 # IDOM in Slidedown Example
 
@@ -64,7 +65,7 @@ The following markup:
 ```markdown
 # Hello IDOM!
 
-<span data-idom="hello.py" />
+<span data-idom="hello.py" data-greeting="hello" />
 ```
 
 and a script `hello.py` containing:
@@ -73,11 +74,11 @@ and a script `hello.py` containing:
 import idom
 
 @idom.component
-def Main():
+def Main(greeting: str):
     hi_count, set_hi_count = idom.hooks.use_state(1)
     return idom.html.button(
         {"onClick": lambda event: set_hi_count(hi_count + 1)},
-        f"IDOM said hi {hi_count} time(s)",
+        f"IDOM said {greeting} {hi_count} time(s)",
     )
 ```
 
