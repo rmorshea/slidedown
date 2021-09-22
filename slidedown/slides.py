@@ -9,15 +9,14 @@ def use_const(func, *args, **kwargs):
 
 @idom.component
 def Slidedeck(initial_slide_number, filepath):
-    slides = use_slides(filepath)
+    slides, visible_slide, set_visible_slide = use_slides(
+        filepath, initial_slide_number - 1
+    )
 
     is_focused = use_const(idom.Ref, False)
     set_focused = use_const(idom.Ref, lambda is_focused: None)
 
     focus_indicator = FocusIndicator(is_focused, set_focused)
-
-    index, set_index = idom.hooks.use_state(initial_slide_number - 1)
-    slide_view = idom.html.div({"id": "slide"}, slides[index])
 
     def set_initial_focus(event):
         set_focused.current(True)
@@ -28,9 +27,9 @@ def Slidedeck(initial_slide_number, filepath):
             set_focused.current(not is_focused.current)
         if is_focused.current:
             if event["key"] == "ArrowLeft":
-                set_index((index - 1) % len(slides))
+                set_visible_slide((visible_slide - 1) % len(slides))
             elif event["key"] in (" ", "ArrowRight"):
-                set_index((index + 1) % len(slides))
+                set_visible_slide((visible_slide + 1) % len(slides))
 
     style = {"outline": "none", "height": "100%", "width": "100%"}
 
@@ -42,7 +41,7 @@ def Slidedeck(initial_slide_number, filepath):
             "style": style,
         },
         idom.html.link({"href": "/_static/markdown.css", "rel": "stylesheet"}),
-        _center_content(slide_view),
+        _center_content(slides),
         focus_indicator,
     )
 
