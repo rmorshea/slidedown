@@ -1,10 +1,6 @@
 import idom
 
-from .load import use_slides
-
-
-def use_const(func, *args, **kwargs):
-    return idom.hooks.use_state(lambda: func(*args, **kwargs))[0]
+from .hooks import use_slides, use_const
 
 
 @idom.component

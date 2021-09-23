@@ -1,6 +1,8 @@
 import os
+import sys
+from importlib import import_module
 from pathlib import Path
-from typing import Any, Dict, List, Callable, Tuple
+from typing import Any, Dict, List, Callable, Tuple, TypeVar
 from idom.core.proto import VdomDict
 
 import markdown
@@ -9,6 +11,13 @@ from idom.utils import html_to_vdom
 
 
 HERE = Path(__file__).parent
+
+
+_T = TypeVar("_T")
+
+
+def use_const(func: Callable[..., _T], *args: Any, **kwargs: Any) -> _T:
+    return idom.hooks.use_state(lambda: func(*args, **kwargs))[0]
 
 
 def use_slides(
@@ -43,6 +52,10 @@ def load_slides(project_path, slides_path):
 
 
 def markdown_to_slidedeck(project_path: Path, md: str) -> List[Dict[str, Any]]:
+    abs_project_path = str(project_path.absolute())
+    if abs_project_path not in sys.path:
+        sys.path.insert(0, abs_project_path)
+
     nodes = html_to_vdom(
         markdown.markdown(
             md,
@@ -55,7 +68,7 @@ def markdown_to_slidedeck(project_path: Path, md: str) -> List[Dict[str, Any]]:
                 }
             },
         ),
-        lambda node: _embedded_idom_script(project_path, node),
+        _embedded_idom_script,
     )["children"]
 
     slide_boundaries = []
@@ -78,19 +91,15 @@ def markdown_to_slidedeck(project_path: Path, md: str) -> List[Dict[str, Any]]:
     return slides
 
 
-def _embedded_idom_script(project_path, node):
+def _embedded_idom_script(node):
     node_attrs = node.get("attributes", {})
     if "data-idom" in node_attrs:
-        script_path = Path(node["attributes"]["data-idom"].replace("/", os.path.sep))
-        if not os.path.isabs(script_path):
-            script_path = project_path / script_path
-
-        env = {}
-        exec(script_path.read_text(encoding="utf-8"), env)
-        Main = env.get("Main")
+        module_name = node["attributes"]["data-idom"]
+        module = import_module(module_name)
+        Main = getattr(module, "Main", None) or getattr(module, "main", None)
         if not callable(Main):
             raise ValueError(
-                f"Script {script_path} does not contain a compoonent named 'Main'"
+                f"Module {module_name!r} does not contain callable 'Main' or 'main' attribute"
             )
 
         params = {
@@ -99,12 +108,12 @@ def _embedded_idom_script(project_path, node):
             if k.startswith("data-") and k != "data-idom"
         }
 
-        main = Main(**params)
+        result = Main(**params)
 
         non_data_attrs = {
             k: v for k, v in node_attrs.items() if not k.startswith("data-")
         }
 
-        return idom.html.div(non_data_attrs, main)
+        return idom.html.div(non_data_attrs, result)
 
     return node

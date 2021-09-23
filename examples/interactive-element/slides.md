@@ -1,3 +1,3 @@
 # Hello IDOM!
 
-<span data-idom="hello.py" data-greeting="hi" />
+<span data-idom="hello" data-greeting="hi" />
