@@ -6,7 +6,7 @@ from .hooks import use_slides, use_const
 @idom.component
 def Slidedeck(initial_slide_number, filepath):
     slides, visible_slide, set_visible_slide = use_slides(
-        filepath, initial_slide_number - 1
+        filepath, initial_slide_number
     )
 
     is_focused = use_const(idom.Ref, False)

@@ -88,3 +88,24 @@ Should produce the following output:
   style="width: 500px"
   src="https://github.com/rmorshea/slidedown/raw/master/docs/slidedown-hello-idom.gif"
 />
+
+# Config File
+
+Slidedown supports a `slidedown.json` config file that can be placed adjacent to your
+Markdown in order to configure the options used when running. The available options
+match those seen in the help message (`slidedown --help`) except with all usages of `-`
+replaced with `_`. For example:
+
+```json
+{
+  "host": "127.0.0.1",
+  "no_browser": true,
+  "no_reload": false,
+  "port": 5678,
+  "reload_delay": 3.0,
+  "reload_ignore": ["ignore-dir/*"],
+  "reload_watch": ["watch-dir/*"],
+  "show_options": false,
+  "start_slide": 0
+}
+```

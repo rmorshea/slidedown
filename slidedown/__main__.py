@@ -4,16 +4,20 @@ Make slideshows with markdown.
 
 Usage:
     slidedown <filepath>
-        [ <start-at-slide-number> ]
+        [ --start-slide=<number> ]
         [ --host=<host> ]
         [ --port=<port> ]
         [ --no-reload ]
-        [ --no-auto-open ]
+        [ --no-browser ]
         [ --reload-delay=<delay> ]
         [ --reload-watch=<pattern> ... ]
         [ --reload-ignore=<pattern> ... ]
+        [ --show-options ]
 
 Options:
+
+--start-slide=<number>
+        The slide to begin at (default: 0)
 
 --host=<host>
         The host where the slides will be served
@@ -24,11 +28,11 @@ Options:
 --no-reload
         Whether or not to reload when files change
 
---no-auto-open
+--no-browser
         Whether to automatically open the browser
 
 --reload-delay=<delay>
-        How long to wait to check for file changes (default: 1s)
+        How long to wait to check for file changes in seconds (default: 3)
 
 --reload-watch=<pattern>
         One or more glob patterns matching files that should be tracked
@@ -39,10 +43,14 @@ Options:
         One or more globa patterns matching files to ignore when
         tracking changes and determining whether to reload. Patterns
         should match paths in the same directory as <filepath>.
+
+--show-options
+        Whether to show the options current being used.
 """
 
 import os
 import re
+import json
 import time
 import webbrowser
 from pathlib import Path
@@ -52,6 +60,8 @@ from idom.server.sanic import PerClientStateServer
 from idom.server.proto import Server
 from sanic import Sanic
 from docopt import docopt
+
+import slidedown
 
 
 from .slides import Slidedeck
@@ -63,44 +73,62 @@ UNDEFINED = object()
 class ArgSpec(NamedTuple):
     name: str
     default: Any = UNDEFINED
-    cast: Optional[Callable[[str], Any]] = None
+    cast: Optional[Callable[[Any], Any]] = None
 
 
 ARG_SPECS = {
-    "<filepath>": ArgSpec("filepath"),
-    "<start-at-slide-number>": ArgSpec("start_at_slide_number", 1, int),
+    "--start-slide": ArgSpec("start_slide", 0, int),
     "--host": ArgSpec("host", "127.0.0.1"),
     "--port": ArgSpec("port", 5678, int),
-    "--no-auto-open": ArgSpec("no_auto_open"),
+    "--no-browser": ArgSpec("no_browser"),
     "--no-reload": ArgSpec("no_reload"),
-    "--reload-delay": ArgSpec("reload_delay", 2, float),
+    "--reload-delay": ArgSpec("reload_delay", 3, float),
     "--reload-watch": ArgSpec("reload_watch"),
     "--reload-ignore": ArgSpec("reload_ignore"),
+    "--show-options": ArgSpec("show_options"),
 }
 
 
 class Arguments(NamedTuple):
-    filepath: str
-    start_at_slide_number: int
+    start_slide: int
     host: str
     port: int
-    no_auto_open: bool
+    no_browser: bool
     no_reload: bool
     reload_delay: float
     reload_watch: List[re.Pattern]
     reload_ignore: List[re.Pattern]
+    show_options: bool
 
 
 def run() -> None:
-    raw_arguments = docopt(__doc__, version="0.1.0")
+    raw_arguments = docopt(__doc__, version=slidedown.__version__)
+
+    filepath = Path(raw_arguments.pop("<filepath>"))
+    if not filepath.exists():
+        print(f"No such file: '{filepath}'")
+        exit(1)
+
+    config_file = filepath.parent / "slidedown.json"
+    if config_file.exists():
+        config_data = json.loads(config_file.read_text())
+        if not isinstance(config_data, dict):
+            print(f"Invalid config {config_file}")
+            exit(1)
+    else:
+        config_data = {}
 
     processes_arguments: Dict[str, Any] = {}
     for arg, spec in list(ARG_SPECS.items()):
-        if raw_arguments[arg] is None:
+        raw_value = raw_arguments[arg]
+        if not raw_value and config_data.get(spec.name):
+            del raw_arguments[arg]
+            value = config_data[spec.name]
+        elif raw_arguments[arg] is None:
             del raw_arguments[arg]
             value = spec.default
         else:
-            value = raw_arguments.pop(arg, spec.default)
+            value = raw_arguments.pop(arg)
 
         if value is UNDEFINED:
             raise ValueError(f"Internal failure - {arg} requires a value")
@@ -119,17 +147,20 @@ def run() -> None:
 
     arguments = Arguments(**processes_arguments)
 
+    if arguments.show_options:
+        print(json.dumps(arguments._asdict(), indent=2, sort_keys=True))
+
     app = Sanic()
 
     app.static("_static", str(HERE / "static"))
 
     idom_server = PerClientStateServer(
-        lambda: Slidedeck(arguments.start_at_slide_number, arguments.filepath),
+        lambda: Slidedeck(arguments.start_slide, filepath),
         app=app,
     )
 
     files_did_change = _make_file_did_change_callback(
-        Path(arguments.filepath),
+        filepath,
         arguments.reload_watch,
         arguments.reload_ignore,
     )
@@ -137,7 +168,7 @@ def run() -> None:
     _run_server(
         idom_server,
         {"host": arguments.host, "port": arguments.port},
-        not arguments.no_auto_open,
+        not arguments.no_browser,
         None if arguments.no_reload else files_did_change,
         arguments.reload_delay,
     )
@@ -172,7 +203,7 @@ def _make_file_did_change_callback(
         if changed_files:
             print(f"File changed: {changed_files[0]}")
             if len(changed_files) > 1:
-                print(f"{len(changed_files - 1)} more files also changed.")
+                print(f"{len(changed_files) - 1} more files also changed.")
 
         return latest_mtime
 
