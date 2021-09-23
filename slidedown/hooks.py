@@ -1,6 +1,5 @@
-import os
 import sys
-from importlib import import_module
+from importlib import import_module, reload as reload_module
 from pathlib import Path
 from typing import Any, Dict, List, Callable, Tuple, TypeVar
 from idom.core.proto import VdomDict
@@ -95,8 +94,13 @@ def _embedded_idom_script(node):
     node_attrs = node.get("attributes", {})
     if "data-idom" in node_attrs:
         module_name = node["attributes"]["data-idom"]
+
+        if module_name in sys.modules:
+            reload_module(sys.modules[module_name])
         module = import_module(module_name)
+
         Main = getattr(module, "Main", None) or getattr(module, "main", None)
+
         if not callable(Main):
             raise ValueError(
                 f"Module {module_name!r} does not contain callable 'Main' or 'main' attribute"
