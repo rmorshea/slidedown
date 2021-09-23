@@ -137,7 +137,7 @@ def _run_server(
     while True:
         time.sleep(reload_delay)
         if should_reload():
-            print("reloading...")
+            print("Reloading...")
             server.stop(3)
             thread.join(3)
             thread = server.run_in_thread(**server_run_options)
