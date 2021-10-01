@@ -18,7 +18,9 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 
-html, body, #app {
+html,
+body,
+#app {
   height: 100%;
   margin: 0;
 }
@@ -43,7 +45,7 @@ html, body, #app {
 }
 
 a {
-  color: #4183C4;
+  color: #4183c4;
   text-decoration: none;
 }
 
@@ -62,7 +64,12 @@ a.anchor {
   bottom: 0;
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   margin: 40px 0 10px;
   padding: 0;
   font-weight: bold;
@@ -71,36 +78,53 @@ h1, h2, h3, h4, h5, h6 {
   position: relative;
 }
 
-h2:first-child, h1:first-child, h1:first-child + h2, h3:first-child, h4:first-child, h5:first-child, h6:first-child {
+h2:first-child,
+h1:first-child,
+h1:first-child + h2,
+h3:first-child,
+h4:first-child,
+h5:first-child,
+h6:first-child {
   margin-top: 0;
   padding-top: 0;
 }
 
-h1:hover a.anchor, h2:hover a.anchor, h3:hover a.anchor, h4:hover a.anchor, h5:hover a.anchor, h6:hover a.anchor {
+h1:hover a.anchor,
+h2:hover a.anchor,
+h3:hover a.anchor,
+h4:hover a.anchor,
+h5:hover a.anchor,
+h6:hover a.anchor {
   text-decoration: none;
 }
 
-h1 tt, h1 code {
+h1 tt,
+h1 code {
   font-size: inherit;
 }
 
-h2 tt, h2 code {
+h2 tt,
+h2 code {
   font-size: inherit;
 }
 
-h3 tt, h3 code {
+h3 tt,
+h3 code {
   font-size: inherit;
 }
 
-h4 tt, h4 code {
+h4 tt,
+h4 code {
   font-size: inherit;
 }
 
-h5 tt, h5 code {
+h5 tt,
+h5 code {
   font-size: inherit;
 }
 
-h6 tt, h6 code {
+h6 tt,
+h6 code {
   font-size: inherit;
 }
 
@@ -117,9 +141,8 @@ h2 {
 
 h3 {
   font-size: 1.5em;
-}px
-
-h4 {
+}
+px h4 {
   font-size: 1em;
 }
 
@@ -132,15 +155,23 @@ h6 {
   font-size: 0.5em;
 }
 
-p, blockquote, ul, ol, dl, li, table, pre {
+p,
+blockquote,
+ul,
+ol,
+dl,
+li,
+table,
+pre {
   margin: 15px 0;
 }
 
 hr {
-  border: 0 none;
-  color: #cccccc;
-  height: 4px;
+  height: 0.25em;
   padding: 0;
+  margin: 24px 0;
+  background-color: #cccccc;
+  border: 0;
 }
 
 body > h2:first-child {
@@ -158,17 +189,30 @@ body > h1:first-child + h2 {
   padding-top: 0;
 }
 
-body > h3:first-child, body > h4:first-child, body > h5:first-child, body > h6:first-child {
+body > h3:first-child,
+body > h4:first-child,
+body > h5:first-child,
+body > h6:first-child {
   margin-top: 0;
   padding-top: 0;
 }
 
-a:first-child h1, a:first-child h2, a:first-child h3, a:first-child h4, a:first-child h5, a:first-child h6 {
+a:first-child h1,
+a:first-child h2,
+a:first-child h3,
+a:first-child h4,
+a:first-child h5,
+a:first-child h6 {
   margin-top: 0;
   padding-top: 0;
 }
 
-h1 p, h2 p, h3 p, h4 p, h5 p, h6 p {
+h1 p,
+h2 p,
+h3 p,
+h4 p,
+h5 p,
+h6 p {
   margin-top: 0;
 }
 
@@ -176,15 +220,18 @@ li p.first {
   display: inline-block;
 }
 
-ul, ol {
+ul,
+ol {
   padding-left: 30px;
 }
 
-ul :first-child, ol :first-child {
+ul :first-child,
+ol :first-child {
   margin-top: 0;
 }
 
-ul :last-child, ol :last-child {
+ul :last-child,
+ol :last-child {
   margin-bottom: 0;
 }
 
@@ -241,29 +288,38 @@ blockquote > :last-child {
 
 table {
   padding: 0;
-  border-collapse: collapse; }
-  table tr {
-    border-top: 1px solid #cccccc;
-    background-color: white;
-    margin: 0;
-    padding: 0; }
-    table tr:nth-child(2n) {
-      background-color: #f8f8f8; }
-    table tr th {
-      font-weight: bold;
-      border: 1px solid #cccccc;
-      text-align: left;
-      margin: 0;
-      padding: 6px 13px; }
-    table tr td {
-      border: 1px solid #cccccc;
-      text-align: left;
-      margin: 0;
-      padding: 6px 13px; }
-    table tr th :first-child, table tr td :first-child {
-      margin-top: 0; }
-    table tr th :last-child, table tr td :last-child {
-      margin-bottom: 0; }
+  border-collapse: collapse;
+}
+table tr {
+  border-top: 1px solid #cccccc;
+  background-color: white;
+  margin: 0;
+  padding: 0;
+}
+table tr:nth-child(2n) {
+  background-color: #f8f8f8;
+}
+table tr th {
+  font-weight: bold;
+  border: 1px solid #cccccc;
+  text-align: left;
+  margin: 0;
+  padding: 6px 13px;
+}
+table tr td {
+  border: 1px solid #cccccc;
+  text-align: left;
+  margin: 0;
+  padding: 6px 13px;
+}
+table tr th :first-child,
+table tr td :first-child {
+  margin-top: 0;
+}
+table tr th :last-child,
+table tr td :last-child {
+  margin-bottom: 0;
+}
 
 img {
   max-width: 100%;
@@ -357,7 +413,8 @@ span.float-right > span {
   text-align: right;
 }
 
-code, tt {
+code,
+tt {
   margin: 0 2px;
   padding: 0 5px;
   white-space: nowrap;
@@ -383,16 +440,21 @@ pre {
   border-radius: 6px;
 }
 
-pre code, pre tt {
+pre code,
+pre tt {
   background-color: transparent;
   border: none;
 }
 
-pre, code, kbd, samp, tt {
-  font-size:0.85em;
+pre,
+code,
+kbd,
+samp,
+tt {
+  font-size: 0.85em;
 }
 
 code {
-  padding: .1em .2em;
+  padding: 0.1em 0.2em;
   border-radius: 6px;
 }
