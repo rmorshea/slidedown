@@ -4,17 +4,32 @@ Make slideshows with markdown.
 
 Usage:
     slidedown <filepath>
+        [ --no-reload ]
+        [ --no-browser ]
+        [ --show-options ]
+        [ --theme=<stylesheet> ]
         [ --start-slide=<number> ]
         [ --host=<host> ]
         [ --port=<port> ]
-        [ --no-reload ]
-        [ --no-browser ]
         [ --reload-delay=<delay> ]
         [ --reload-watch=<pattern> ... ]
         [ --reload-ignore=<pattern> ... ]
-        [ --show-options ]
 
 Options:
+
+--no-reload
+        Whether or not to reload when files change
+
+--no-browser
+        Whether to automatically open the browser
+
+--show-options
+        Whether to show the options current being used.
+
+--theme=<stylesheet>
+        A CSS stylesheet to apply to your slides. #app is the viewport for
+        the whole application, while #slide identifies the currently visible
+        slide content. Inside #slide should be a standard Markdown layout.
 
 --start-slide=<number>
         The slide to begin at (default: 0)
@@ -24,12 +39,6 @@ Options:
 
 --port=<port>
         The host port to server from
-
---no-reload
-        Whether or not to reload when files change
-
---no-browser
-        Whether to automatically open the browser
 
 --reload-delay=<delay>
         How long to wait to check for file changes in seconds (default: 3)
@@ -43,9 +52,6 @@ Options:
         One or more globa patterns matching files to ignore when
         tracking changes and determining whether to reload. Patterns
         should match paths in the same directory as <filepath>.
-
---show-options
-        Whether to show the options current being used.
 """
 
 import os
@@ -86,6 +92,7 @@ ARG_SPECS = {
     "--reload-watch": ArgSpec("reload_watch"),
     "--reload-ignore": ArgSpec("reload_ignore"),
     "--show-options": ArgSpec("show_options"),
+    "--theme": ArgSpec("theme", HERE.absolute() / "static" / "markdown.css", Path),
 }
 
 
@@ -99,12 +106,15 @@ class Arguments(NamedTuple):
     reload_watch: List[re.Pattern]
     reload_ignore: List[re.Pattern]
     show_options: bool
+    theme: Path
 
 
 def run() -> None:
     raw_arguments = docopt(__doc__, version=slidedown.__version__)
 
     filepath = Path(raw_arguments.pop("<filepath>"))
+    projpath = filepath.parent
+
     if not filepath.exists():
         print(f"No such file: '{filepath}'")
         exit(1)
@@ -151,8 +161,15 @@ def run() -> None:
         print(json.dumps(arguments._asdict(), indent=2, sort_keys=True))
 
     app = Sanic()
+    theme_path = arguments.theme
+    if not theme_path.is_absolute():
+        theme_path = projpath / theme_path
 
-    app.static("_static", str(HERE / "static"))
+    if theme_path.is_file():
+        app.static("_static/markdown.css", str(arguments.theme))
+    else:
+        print(f"Stylesheet {theme_path} does not exist")
+        exit(1)
 
     idom_server = PerClientStateServer(
         lambda: Slidedeck(arguments.start_slide, filepath),
